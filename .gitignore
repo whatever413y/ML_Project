@@ -16,6 +16,8 @@ pnpm-lock.yaml
 
 # production
 /build
+src/api/__pycache__
+MachineLearningModel/PersonalityTest/data-final.csv
 
 # misc
 .DS_Store
