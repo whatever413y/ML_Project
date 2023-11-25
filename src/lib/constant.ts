@@ -43,7 +43,7 @@ export const TestCardList = [
 
 export const questions = [
 	{
-		category: "opn",
+		category: "open",
 		questions: [
 			"I have a rich vocabulary.",
 			"I have difficulty understanding abstract ideas.",
@@ -58,7 +58,7 @@ export const questions = [
 		],
 	},
 	{
-		category: "csn",
+		category: "conscientious",
 		questions: [
 			"I am always prepared.",
 			"I leave my belongings around.",
@@ -73,7 +73,7 @@ export const questions = [
 		],
 	},
 	{
-		category: "ext",
+		category: "extroversion",
 		questions: [
 			"I am the life of the party.",
 			"I don't talk a lot.",
@@ -88,7 +88,7 @@ export const questions = [
 		],
 	},
 	{
-		category: "agr",
+		category: "agreeable",
 		questions: [
 			"I feel little concern for others.",
 			"I am interested in people.",
@@ -103,7 +103,7 @@ export const questions = [
 		],
 	},
 	{
-		category: "est",
+		category: "neurotic",
 		questions: [
 			"I get stressed out easily.",
 			"I am relaxed most of the time.",
@@ -118,11 +118,3 @@ export const questions = [
 		],
 	},
 ]
-
-export enum QuestionType {
-	opn = "Openness",
-	csn = "Conscientiousness",
-	ext = "Extraversion",
-	agr = "Agreeableness",
-	est = "Neuroticism",
-}

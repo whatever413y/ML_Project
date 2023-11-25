@@ -26,7 +26,7 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-5 gap-2 mt-20">
+      <div className="h-full grid grid-cols-5 gap-2 mt-20">
         <OceanClient />
       </div>
     </main>

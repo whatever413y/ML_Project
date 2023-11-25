@@ -34,7 +34,17 @@ export default function Page() {
   }
 
   function submit() {
-    const arrayAsString = btoa(JSON.stringify(answers))
+    const result = {} as any
+
+    for (const answer of answers) {
+      const questionLength = questions.find(
+        (question) => question.category === answer.category.toLowerCase(),
+      )?.questions.length
+      result[answer.category] =
+        answer.answers.reduce((total, answer) => total + answer.value, 0) /
+        questionLength!
+    }
+    const arrayAsString = btoa(JSON.stringify(result))
     router.push(`/result?data=${arrayAsString}`)
   }
 
@@ -93,7 +103,7 @@ export default function Page() {
       </div>
       <div className="max-w-xl mx-auto grid gap-5 my-10 w-full">
         {questions[currentStepIndex].questions.map((question, index) => {
-          const category = questions[currentStepIndex].category.toUpperCase()
+          const category = questions[currentStepIndex].category
 
           return (
             <Card
