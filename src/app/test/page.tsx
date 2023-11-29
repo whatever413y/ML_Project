@@ -33,7 +33,7 @@ export default function Page() {
     })
   }
 
-  function submit() {
+  async function submit() {
     const result = {} as any
 
     for (const answer of answers) {
@@ -44,7 +44,15 @@ export default function Page() {
         answer.answers.reduce((total, answer) => total + answer.value, 0) /
         questionLength!
     }
-    const arrayAsString = btoa(JSON.stringify(result))
+    const res = await fetch('http://localhost:5328/api/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(result),
+    })
+    const data = await res.json()
+    const arrayAsString = btoa(JSON.stringify(data))
     router.push(`/result?data=${arrayAsString}`)
   }
 
