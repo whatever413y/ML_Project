@@ -104,7 +104,7 @@ export default function Page() {
         Take the Personality Test
       </h1>
       <div className="grid grid-cols-3 gap-2">
-        <TestCard />
+        <TestCard title={''} description={''} />
       </div>
       <div className="max-w-md mx-auto grid gap-5 mt-20 mb-5">
         <Progress value={(currentStepIndex / pageSize) * 100} />
