@@ -1,87 +1,126 @@
-'use client'
+"use client";
 
-import { TestCard } from '@/components/test/card'
-import { Progress } from '@/components/ui/progress'
-import { questions } from '@/lib/constant'
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Answer } from '@/lib/types'
-import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
+import { TestCard } from "@/components/test/card";
+import { Progress } from "@/components/ui/progress";
+import { questions } from "@/lib/constant";
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Answer } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const router = useRouter()
-  const [answers, setAnswers] = useState<Answer[]>([])
-  const [section, setSection] = useState(1)
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
-  const pageSize = questions.length
+  const router = useRouter();
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const pageSize = questions.length;
 
   function next() {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    const currentQuestions = questions[currentStepIndex].questions;
 
-    setCurrentStepIndex((index) => {
-      if (index > pageSize) return index
-      return index + 1
-    })
-  }
+    // Check if there are unanswered questions in the current step
+    const hasUnansweredQuestions = currentQuestions.some((_, index) => {
+      const keyIndex = answers.findIndex(
+        (answer) => answer.category === questions[currentStepIndex].category
+      );
 
-  function back() {
-    setCurrentStepIndex((index) => {
-      if (index <= 0) return index
-      return index - 1
-    })
+      if (keyIndex !== -1) {
+        const existingCategory = answers[keyIndex];
+        return (
+          existingCategory.answers.findIndex(
+            (answer) => answer.question === index + 1
+          ) === -1
+        );
+      }
+
+      return true; // Category not found means all questions are unanswered
+    });
+
+    if (!hasUnansweredQuestions) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      setCurrentStepIndex((index) => {
+        if (index > pageSize) return index;
+        return index + 1;
+      });
+    }
   }
 
   async function submit() {
-    const result = {} as any
+    // Check if there are unanswered questions in the current step
+    const hasUnansweredQuestions = questions[currentStepIndex].questions.some(
+      (_, index) => {
+        const keyIndex = answers.findIndex(
+          (answer) => answer.category === questions[currentStepIndex].category
+        );
 
-    for (const answer of answers) {
-      const questionLength = questions.find(
-        (question) => question.category === answer.category.toLowerCase(),
-      )?.questions.length
-      result[answer.category] =
-        answer.answers.reduce((total, answer) => total + answer.value, 0) /
-        questionLength!
+        if (keyIndex !== -1) {
+          const existingCategory = answers[keyIndex];
+          return (
+            existingCategory.answers.findIndex(
+              (answer) => answer.question === index + 1
+            ) === -1
+          );
+        }
+
+        return true; // Category not found means all questions are unanswered
+      }
+    );
+
+    if (!hasUnansweredQuestions) {
+      const result = {} as any;
+
+      for (const answer of answers) {
+        const questionLength = questions.find(
+          (question) => question.category === answer.category.toLowerCase()
+        )?.questions.length;
+        result[answer.category] =
+          answer.answers.reduce((total, answer) => total + answer.value, 0) /
+          questionLength!;
+      }
+
+      const res = await fetch("http://localhost:5328/api/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(result),
+      });
+
+      const data = await res.json();
+      const arrayAsString = btoa(JSON.stringify(data));
+      router.push(`/result?data=${arrayAsString}`);
     }
-    const res = await fetch('http://localhost:5328/api/predict', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(result),
-    })
-    const data = await res.json()
-    const arrayAsString = btoa(JSON.stringify(data))
-    router.push(`/result?data=${arrayAsString}`)
   }
-
   function onChange(value: string, index: number) {
-    const element = document.getElementById(`question-${index}`)
+    const element = document.getElementById(`question-${index}`);
 
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      element.scrollIntoView({ behavior: "smooth" });
     }
 
-    const splitted = value.split('|')
-    const category = splitted[0]
-    const question = parseInt(splitted[1])
-    const answerValue = parseInt(splitted[2])
+    const splitted = value.split("|");
+    const category = splitted[0];
+    const question = parseInt(splitted[1]);
+    const answerValue = parseInt(splitted[2]);
 
-    const keyIndex = answers.findIndex((answer) => answer.category === category)
+    const keyIndex = answers.findIndex(
+      (answer) => answer.category === category
+    );
 
     if (keyIndex !== -1) {
-      const updatedAnswers = [...answers]
-      const existingCategory = updatedAnswers[keyIndex]
+      const updatedAnswers = [...answers];
+      const existingCategory = updatedAnswers[keyIndex];
       const questionIndex = existingCategory.answers.findIndex(
-        (answer) => answer.question === question,
-      )
+        (answer) => answer.question === question
+      );
 
       questionIndex !== -1
         ? (existingCategory.answers[questionIndex].value = answerValue)
-        : existingCategory.answers.push({ question, value: answerValue })
+        : existingCategory.answers.push({ question, value: answerValue });
 
-      setAnswers(updatedAnswers)
+      setAnswers(updatedAnswers);
     } else {
       setAnswers([
         ...answers,
@@ -94,8 +133,15 @@ export default function Page() {
             },
           ],
         },
-      ])
+      ]);
     }
+  }
+
+  function back() {
+    setCurrentStepIndex((index) => {
+      if (index <= 0) return index;
+      return index - 1;
+    });
   }
 
   return (
@@ -104,14 +150,14 @@ export default function Page() {
         Take the Personality Test
       </h1>
       <div className="grid grid-cols-3 gap-2">
-        <TestCard title={''} description={''} />
+        <TestCard title={""} description={""} />
       </div>
       <div className="max-w-md mx-auto grid gap-5 mt-20 mb-5">
         <Progress value={(currentStepIndex / pageSize) * 100} />
       </div>
       <div className="max-w-xl mx-auto grid gap-5 my-10 w-full">
         {questions[currentStepIndex].questions.map((question, index) => {
-          const category = questions[currentStepIndex].category
+          const category = questions[currentStepIndex].category;
 
           return (
             <Card
@@ -143,7 +189,7 @@ export default function Page() {
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
         <div className="flex justify-center items-center gap-5 w-full mt-10">
           {currentStepIndex !== 0 && (
@@ -164,5 +210,5 @@ export default function Page() {
         </div>
       </div>
     </main>
-  )
+  );
 }
