@@ -16,7 +16,7 @@ export default function Page() {
   }
 
   const clusterInfo: {
-    [key: number]: { name: string; description: string};
+    [key: number]: { name: string; description: string };
   } = {
     0: {
       name: "Creative Free Spirit",
@@ -44,7 +44,6 @@ export default function Page() {
         "You might prefer routine and familiarity and might be less open to new experiences. You could struggle with organization and might not actively seek social interactions. It might also challenging for you to maintain harmonious relationships and could have a higher leveks of anxiety and stress.",
     },
   };
-  const { name, description } = clusterInfo[clusterNumber];
 
   return (
     <main className="max-w-5xl mx-auto">
@@ -52,8 +51,19 @@ export default function Page() {
         Your Personality Test Results
       </h1>
 
-      <h2>{name}</h2>
-      <p>{description}</p>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <h1>
+          <b>{clusterInfo[clusterNumber].name}</b>
+        </h1>
+        <p className="text-center">{clusterInfo[clusterNumber].description}</p>
+      </div>
     </main>
-  )
+  );
 }

@@ -19,7 +19,6 @@ export default function Page() {
   function next() {
     const currentQuestions = questions[currentStepIndex].questions;
 
-    // Check if there are unanswered questions in the current step
     const hasUnansweredQuestions = currentQuestions.some((_, index) => {
       const keyIndex = answers.findIndex(
         (answer) => answer.category === questions[currentStepIndex].category
@@ -34,7 +33,7 @@ export default function Page() {
         );
       }
 
-      return true; // Category not found means all questions are unanswered
+      return true; 
     });
 
     if (!hasUnansweredQuestions) {
@@ -48,7 +47,6 @@ export default function Page() {
   }
 
   async function submit() {
-    // Check if there are unanswered questions in the current step
     const hasUnansweredQuestions = questions[currentStepIndex].questions.some(
       (_, index) => {
         const keyIndex = answers.findIndex(
@@ -64,7 +62,7 @@ export default function Page() {
           );
         }
 
-        return true; // Category not found means all questions are unanswered
+        return true; 
       }
     );
 
