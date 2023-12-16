@@ -78,7 +78,7 @@ export default function Page() {
           questionLength!;
       }
 
-      const res = await fetch("https://ml-proj-liechees-projects.vercel.app/api/predict", {
+      const res = await fetch("http://localhost:5328/api/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
