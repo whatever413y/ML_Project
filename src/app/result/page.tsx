@@ -9,18 +9,12 @@ import cluster1 from "./cluster1.png";
 import cluster2 from "./cluster2.png";
 import cluster3 from "./cluster3.png";
 import cluster4 from "./cluster4.png";
+import { resourceLimits } from "worker_threads";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const data = JSON.parse(atob(searchParams.get("data")!)) as Answer[];
+  const data:number = JSON.parse(atob(searchParams.get("data")!)) 
 
-  let clusterNumber = 0;
-  if (data[0] && data[0].answers) {
-    clusterNumber = data[0].answers.reduce(
-      (sum, answer) => sum + answer.value,
-      0
-    );
-  }
 
   const clusterInfo: {
     [key: number]: { name: string; description: string; image: any };
@@ -72,15 +66,15 @@ export default function Page() {
         }}
       >
         <Image
-          src={clusterInfo[clusterNumber].image}
+          src={clusterInfo[data].image}
           alt={"image"}
           style={{ width: "20%", height: "auto", marginTop: "20px" }}
         ></Image>
         <br />
         <h1>
-          <b>{clusterInfo[clusterNumber].name}</b>
+          <b>{clusterInfo[data].name}</b>
         </h1>
-        <p className="text-center">{clusterInfo[clusterNumber].description}</p>
+        <p className="text-center">{clusterInfo[data].description}</p>
       </div>
     </main>
   );
